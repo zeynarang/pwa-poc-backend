@@ -1,19 +1,13 @@
 import http from "http";
 import webpush from "web-push";
-import AWS from "aws-sdk";
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import { email, TASKS, vapidKeys } from "./constant.js";
+
+const snsClient = new SNSClient({ region: "ap-south-1" });
 
 const port = process.env.PORT || 4000;
-const vapidKeys = {
-  publicKey:
-    "BBZ-_LjVst1ZWLQQYIdLGBs4Ez_ApbNCQnOanFDBoT1AbJhYq7RovyWoo4BcJe8PCcswcCjwLckJ_1JSza-Ebfc",
-  privateKey: "pkytmRATUvrM-JnjvLGkDUZ9L5MbyIjoEmIHe-oMUxo",
-};
 
-webpush.setVapidDetails(
-  "mailto:jatinnarangofficial@gmail.com",
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
+webpush.setVapidDetails(email, vapidKeys.publicKey, vapidKeys.privateKey);
 
 const handleGetAPIs = async (req, res) => {
   switch (req.url) {
@@ -88,7 +82,6 @@ const handlePostAPIs = async (req, res) => {
           id: TASKS.length + 1,
         });
 
-        const SNS = new AWS.SNS();
         const gcmPayload = {
           notification: {
             title: "Task Created",
@@ -106,24 +99,28 @@ const handlePostAPIs = async (req, res) => {
             '{  "notification": { "title": "Task Created", "body": "A new task was created." }  }',
         };
 
-        SNS.publish(
-          {
-            TopicArn: "arn:aws:sns:ap-south-1:322794129073:wfm-standard",
-            MessageStructure: "json",
-            Message: JSON.stringify(message),
-          },
-          (err, data) => {
-            console.error("err", err);
-            console.log("res", data);
-          }
-        );
+        const params = {
+          TopicArn: "arn:aws:sns:ap-south-1:322794129073:wfm-standard",
+          MessageStructure: "json",
+          Message: JSON.stringify(message),
+        };
 
-        res.statusCode = 200;
-        res.end(JSON.stringify({ newTask }));
+        try {
+          const command = new PublishCommand(params);
+          const data = await snsClient.send(command);
+          console.log("Message published successfully:", data);
+          res.statusCode = 200;
+          res.end(JSON.stringify({ newTask }));
+        } catch (err) {
+          console.error("Error publishing message:", err);
+          res.statusCode = 500;
+          res.end(JSON.stringify({ message: "Something went wrong" }));
+        }
       });
     }
   }
 };
+
 const handlePutAPIs = async (req, res) => {
   if (req.url === "/tasks") {
     let requestData = "";

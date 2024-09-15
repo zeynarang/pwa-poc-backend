@@ -1,5 +1,7 @@
-const express = require("express");
-const webpush = require("web-push");
+import express from "express";
+import webpush from "web-push";
+import { email } from "./constant.js";
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -8,11 +10,7 @@ const vapidKeys = webpush.generateVAPIDKeys();
 webpush.setGCMAPIKey(
   "BCGiQJ1e-bMuPP07L3-ojOZKUtBW8wwtV8ILBLFjo0DNi-5IFsln4WEjpUkvpVRztRv1ChdnOW6KSL7Ml9YuoiI"
 );
-webpush.setVapidDetails(
-  "mailto:jatinnarangofficial@gmail.com",
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
+webpush.setVapidDetails(email, vapidKeys.publicKey, vapidKeys.privateKey);
 app.use(express.json());
 app.use((req, res, next) => {
   // Set CORS headers

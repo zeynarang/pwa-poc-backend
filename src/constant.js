@@ -38,3 +38,11 @@ export const TASKS = [
     status: "INCOMPLETE",
   },
 ];
+
+export const vapidKeys = {
+  publicKey:
+    "BBZ-_LjVst1ZWLQQYIdLGBs4Ez_ApbNCQnOanFDBoT1AbJhYq7RovyWoo4BcJe8PCcswcCjwLckJ_1JSza-Ebfc",
+  privateKey: "pkytmRATUvrM-JnjvLGkDUZ9L5MbyIjoEmIHe-oMUxo",
+};
+
+export const email = "mailto:jatinnarangofficial@gmail.com";
