@@ -1,18 +1,16 @@
 import express from "express";
 import webpush from "web-push";
-import { email } from "./constant.js";
+import { email, GCMAPIKey } from "./constant.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
 
 const vapidKeys = webpush.generateVAPIDKeys();
 
-webpush.setGCMAPIKey(
-  "BCGiQJ1e-bMuPP07L3-ojOZKUtBW8wwtV8ILBLFjo0DNi-5IFsln4WEjpUkvpVRztRv1ChdnOW6KSL7Ml9YuoiI"
-);
+webpush.setGCMAPIKey(GCMAPIKey);
 webpush.setVapidDetails(email, vapidKeys.publicKey, vapidKeys.privateKey);
 app.use(express.json());
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   // Set CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -23,7 +21,6 @@ app.use((req, res, next) => {
 
 // Route for subscribing to push notifications
 app.post("/subscribe", (req, res) => {
-  console.log("req", req);
   const subscription = req.body.subObj;
   const checked = req.body.checked;
   const notificationPayload = JSON.stringify({

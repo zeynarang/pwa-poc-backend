@@ -40,9 +40,10 @@ export const TASKS = [
 ];
 
 export const vapidKeys = {
-  publicKey:
-    "BBZ-_LjVst1ZWLQQYIdLGBs4Ez_ApbNCQnOanFDBoT1AbJhYq7RovyWoo4BcJe8PCcswcCjwLckJ_1JSza-Ebfc",
-  privateKey: "pkytmRATUvrM-JnjvLGkDUZ9L5MbyIjoEmIHe-oMUxo",
+  publicKey: process.env.VAPID_PUBLIC_KEY,
+  privateKey: process.env.VAPID_PRIVATE_KEY,
 };
 
 export const email = "mailto:jatinnarangofficial@gmail.com";
+
+export const GCMAPIKey = process.env.GCMAPIKey;
